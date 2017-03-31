@@ -1,16 +1,19 @@
 (function () {
     var self = this;
-    self.canvas = null;
     self.GUI = null;
-    self.hasStarted = false;
-    self.message = "Press enter to start";
     self.coins = 0;
+    self.canvas = null;
+    self.message = "Press enter to start";
+    self.spaceShip = null;
+    self.hasStarted = false;
+
 
     self.init = function () {
         self.canvas = document.querySelector("#main");
         self.canvas.width = window.innerWidth;
         self.canvas.height = window.innerHeight - 5;
         self.context = self.canvas.getContext('2d');
+        self.oldX = self.currentX = (self.canvas.width - 10) / 2;
         self.drawGUI();
         self.registerEvents();
     };
@@ -29,6 +32,29 @@
         if (key.keyCode == 53) {
             self.addCoins();
         }
+
+        if (key.keyCode == 39) {
+            self.moveSpaceShip('right');
+        }
+
+        if (key.keyCode == 37) {
+            self.moveSpaceShip('left');
+        }
+    };
+
+    self.moveSpaceShip = function (moveTo) {
+        self.oldX = self.currentX;
+        if (moveTo == 'left') {
+            self.currentX -= 20;
+        }
+
+        if (moveTo == 'right') {
+            self.currentX += 20;
+        }
+
+        self.eraseSpaceship();
+        self.drawSpaceship();
+
     };
 
     self.addCoins = function () {
@@ -49,6 +75,10 @@
 
     self.eraseGUI = function () {
         self.eraseInitialMessage();
+
+        setTimeout(function () {
+            self.drawSpaceship();
+        }, 1000);
     };
 
     self.drawInitialMessage = function () {
@@ -92,6 +122,24 @@
         self.GUI.fillRect(x - y, y - 49, self.message.length * 50 / 2, 50);
         self.GUI.closePath();
         self.GUI.fill();
+    };
+
+    self.drawSpaceship = function () {
+        self.spaceShip = self.canvas.getContext('2d');
+        self.spaceShip.beginPath();
+        self.spaceShip.fillStyle = 'black';
+        self.spaceShip.fillRect(self.currentX, self.canvas.height - 20, 20, 20);
+        self.spaceShip.closePath();
+        self.spaceShip.fill();
+    };
+
+    self.eraseSpaceship = function () {
+        self.spaceShip.beginPath();
+        self.spaceShip.fillStyle = 'white';
+        console.log(self.currentX);
+        self.spaceShip.fillRect(self.oldX, self.canvas.height - 20, 20, 20);
+        self.spaceShip.closePath();
+        self.spaceShip.fill();
     };
 
     return {
