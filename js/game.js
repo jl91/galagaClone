@@ -49,17 +49,20 @@
     };
 
     self.shoot = function () {
-        var currentShootY = self.currentX - 30;
-
         var x, y;
         y = self.canvas.height - 40;
         x = self.currentX + 8;
         self.drawShoot(x, y);
-        setInterval(function () {
+        var intervalId = setInterval(function () {
             self.eraseShoot(x, y);
             y -= 10;
             self.drawShoot(x, y);
-        }, 100);
+
+            if (y < -10) {
+                clearInterval(intervalId);
+                return;
+            }
+        }, 10);
 
     };
 
