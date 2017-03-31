@@ -6,6 +6,8 @@
     self.message = "Press enter to start";
     self.spaceShip = null;
     self.hasStarted = false;
+    self.currentShootY = 0;
+    self.currentShoot = 0;
 
 
     self.init = function () {
@@ -40,6 +42,23 @@
         if (key.keyCode == 37) {
             self.moveSpaceShip('left');
         }
+
+        if (key.keyCode == 32) {
+            self.shoot();
+        }
+    };
+
+    self.shoot = function () {
+        var currentShootY = self.currentX - 30;
+        self.drawShoot();
+    };
+
+    self.drawShoot = function () {
+        self.currentShoot = self.canvas.getContext('2d');
+        self.currentShoot.beginPath();
+        self.currentShoot.fillStyle = 'red';
+        self.currentShoot.fillRect(self.oldX + 8, self.canvas.height - 40, 5, 15);
+        self.currentShoot.fill();
     };
 
     self.moveSpaceShip = function (moveTo) {
