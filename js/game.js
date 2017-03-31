@@ -50,14 +50,31 @@
 
     self.shoot = function () {
         var currentShootY = self.currentX - 30;
-        self.drawShoot();
+
+        var x, y;
+        y = self.canvas.height - 40;
+        x = self.currentX + 8;
+        self.drawShoot(x, y);
+        setInterval(function () {
+            self.eraseShoot(x, y);
+            y -= 10;
+            self.drawShoot(x, y);
+        }, 100);
+
     };
 
-    self.drawShoot = function () {
+    self.drawShoot = function (x, y) {
         self.currentShoot = self.canvas.getContext('2d');
         self.currentShoot.beginPath();
         self.currentShoot.fillStyle = 'red';
-        self.currentShoot.fillRect(self.oldX + 8, self.canvas.height - 40, 5, 15);
+        self.currentShoot.fillRect(x, y, 5, 15);
+        self.currentShoot.fill();
+    };
+
+    self.eraseShoot = function (x, y) {
+        self.currentShoot.beginPath();
+        self.currentShoot.fillStyle = 'white';
+        self.currentShoot.fillRect(x, y, 5, 15);
         self.currentShoot.fill();
     };
 
@@ -165,4 +182,5 @@
         "init": self.init
     };
 
-})().init();
+})
+().init();
