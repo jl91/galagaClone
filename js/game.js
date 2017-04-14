@@ -9,6 +9,7 @@
     self.hasStarted = false;
     self.currentShootY = 0;
     self.currentShoot = 0;
+    self.shoots = [];
 
     self.init = function () {
         self.canvas = document.querySelector("#main");
@@ -145,6 +146,7 @@
 
         setTimeout(function () {
             self.drawEnemies();
+            self.moveEnemies()
         }, 1000);
     };
 
@@ -226,7 +228,6 @@
             for (var j = 0; j < 10; j++) {
                 var x = currentLeft + baseY * j + 10;
                 self.drawEnemy(x, y, i, j);
-
             }
         }
     };
@@ -252,6 +253,27 @@
         self.enemies[line][column].canvas.fill();
     };
 
+    self.moveEnemies = function () {
+
+        var baseX = 50;
+        var baseY = 50;
+
+
+        setInterval(function () {
+
+            for (var line = 3; line > 0; line--) {
+                for (var column = 9; column > 0; column--) {
+                    var enemy = self.enemies[line][column];
+
+                    var x = enemy.oldX;
+                    var y = enemy.oldY;
+
+                    self.eraseEnemy(line, column);
+                    self.drawEnemy(x + baseX, y, line, column);
+                }
+            }
+        }, 500);
+    };
 
     return {
         "init": self.init
