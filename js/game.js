@@ -5,10 +5,10 @@
     self.canvas = null;
     self.message = "Press enter to start";
     self.spaceShip = null;
+    self.enemies = [];
     self.hasStarted = false;
     self.currentShootY = 0;
     self.currentShoot = 0;
-
 
     self.init = function () {
         self.canvas = document.querySelector("#main");
@@ -20,6 +20,23 @@
         self.registerEvents();
     };
 
+    self.constructEnemies = function () {
+        self.enemies = new Array(4);
+        for (var i = 0; i < 4; i++) {
+            self.enemies[i] = new Array(10);
+        }
+
+        for (var i = 0; i < 4; i++) {
+            for (var j = 0; j < 10; j++) {
+                self.enemies[i][j] = {
+                    'canvas': self.canvas.getContext('2d'),
+                    'oldX': 0,
+                    'oldY': 0
+                };
+            }
+        }
+    };
+
     self.keyDown = function (key) {
         console.log(key);
         if (key.keyCode == 13) {
@@ -27,8 +44,15 @@
                 alert('Insert coins, press 5');
                 return;
             }
-
             self.eraseGUI();
+        }
+
+        if (
+            self.coins == 0 &&
+            key.keyCode != 13 &&
+            key.keyCode != 53
+        ) {
+            return;
         }
 
         if (key.keyCode == 53) {
@@ -84,11 +108,11 @@
     self.moveSpaceShip = function (moveTo) {
         self.oldX = self.currentX;
         if (moveTo == 'left') {
-            self.currentX -= 20;
+            self.currentX -= 5;
         }
 
         if (moveTo == 'right') {
-            self.currentX += 20;
+            self.currentX += 5;
         }
 
         self.eraseSpaceship();
@@ -118,6 +142,10 @@
         setTimeout(function () {
             self.drawSpaceship();
         }, 1000);
+
+        setTimeout(function () {
+            self.drawEnemies();
+        }, 1000);
     };
 
     self.drawInitialMessage = function () {
@@ -129,6 +157,7 @@
         self.GUI.textAlign = 'center';
         self.GUI.fillText(self.message, x, y);
         self.GUI.fill();
+        self.constructEnemies();
     };
 
     self.drawCoins = function () {
@@ -175,11 +204,54 @@
     self.eraseSpaceship = function () {
         self.spaceShip.beginPath();
         self.spaceShip.fillStyle = 'white';
-        console.log(self.currentX);
         self.spaceShip.fillRect(self.oldX, self.canvas.height - 20, 20, 20);
         self.spaceShip.closePath();
         self.spaceShip.fill();
     };
+
+
+    self.drawEnemies = function () {
+        var baseX = 50;
+        var baseY = 50;
+
+        var left = (self.canvas.width / 100) * 33.3;
+        var top = self.canvas.height / 8;
+        var currentTop = top;
+        var currentLeft = left;
+
+        for (var i = 0; i < 4; i++) {
+
+            var y = currentTop + baseX * i + 50;
+
+            for (var j = 0; j < 10; j++) {
+                var x = currentLeft + baseY * j + 10;
+                self.drawEnemy(x, y, i, j);
+
+            }
+        }
+    };
+
+    self.drawEnemy = function (x, y, line, column) {
+        self.enemies[line][column].oldX = x;
+        self.enemies[line][column].oldY = y;
+        self.enemies[line][column].canvas.beginPath();
+        self.enemies[line][column].canvas.fillStyle = 'green';
+        self.enemies[line][column].canvas.fillRect(x, y, 20, 20);
+        self.enemies[line][column].canvas.closePath();
+        self.enemies[line][column].canvas.fill();
+    };
+
+    self.eraseEnemy = function (line, column) {
+        var x = self.enemies[line][column].oldX;
+        var y = self.enemies[line][column].oldY;
+
+        self.enemies[line][column].canvas.beginPath();
+        self.enemies[line][column].canvas.fillStyle = 'white';
+        self.enemies[line][column].canvas.fillRect(x, y, 20, 20);
+        self.enemies[line][column].canvas.closePath();
+        self.enemies[line][column].canvas.fill();
+    };
+
 
     return {
         "init": self.init
